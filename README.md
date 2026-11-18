@@ -45,10 +45,20 @@ The Google Indexing API requires authentication via a Google Cloud Service Accou
    npm install
    ```
 
-2. **Verify Project Structure**:
-   Make sure `service_account.json` is located in the root directory:
+2. **Configure Password Protection (`.env`)**:
+   Create or edit the `.env` file in the root directory (you can copy `.env.example`):
+   ```bash
+   PORT=3000
+   AUTH_USER=admin
+   AUTH_PASS=your-secure-password
+   ```
+
+3. **Verify Project Structure**:
+   Make sure `service_account.json` and `.env` are located in the root directory:
    ```text
    indexing-test/
+   ├── .env                    <-- Password protection credentials
+   ├── .env.example
    ├── index.js
    ├── package.json
    ├── service_account.json    <-- Required Google credentials file
@@ -74,7 +84,9 @@ npm run dev
    ```text
    http://localhost:3000
    ```
-2. **Choose the Action**:
+2. **Log In**:
+   A browser authentication popup will appear. Enter your username and password configured in your `.env` file (Default: `admin` / `admin123`).
+3. **Choose the Action**:
    - **Update URL (`URL_UPDATED`)**: Informs Google that a new URL has been added or existing content has been updated.
    - **Delete URL (`URL_DELETED`)**: Informs Google that a page has been removed from the site (returns 404/410).
 3. **Input URLs**:

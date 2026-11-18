@@ -1,10 +1,40 @@
+require('dotenv').config();
 const express = require('express');
+const basicAuth = require('express-basic-auth');
 const { google } = require('googleapis');
 const path = require('path');
 const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const authUser = process.env.AUTH_USER || 'admin';
+const authPass = process.env.AUTH_PASS || 'admin123';
+
+// Password protection middleware
+app.use(basicAuth({
+  users: { [authUser]: authPass },
+  challenge: true,
+  realm: 'Google Indexing Tool'
+}));
+
+// Explicitly block direct web access to sensitive files
+app.use((req, res, next) => {
+  const blockedFiles = [
+    'service_account.json',
+    '.env',
+    '.env.example',
+    'package.json',
+    'package-lock.json',
+    '.htaccess',
+    '.gitignore'
+  ];
+  const requestedFile = path.basename(req.path).toLowerCase();
+  if (blockedFiles.includes(requestedFile)) {
+    return res.status(403).send('Forbidden: Access to this file is blocked.');
+  }
+  next();
+});
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
